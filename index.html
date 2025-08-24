@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pergunta e Resposta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            overflow-y: auto;
+        }
+        .container {
+            max-width: 412px;
+            margin: 0 auto;
+        }
+        .campo {
+            width: 100%;
+            margin: 8px 0;
+            padding: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        #pergunta, #resposta {
+            border: 1px solid #ccc;
+            -webkit-appearance: none;
+        }
+        .botao {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        #resposta {
+            width: 100%;
+            padding: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+        }
+        @media only screen and (max-width: 256px) {
+            .container {
+                width: 212px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Pergunta e Resposta</h2>
+        <input type="text" id="pergunta" class="campo" placeholder="Digite sua pergunta aqui" maxlength="200" />
+        <div id="resposta" class="campo"></div>
+        <button class="botao" onclick="gerarResposta()">Gerar Resposta</button>
+    </div>
+
+    <script type="text/javascript">
+        function gerarResposta() {
+            var perguntaEl = document.getElementById("pergunta");
+            var respostaEl = document.getElementById("resposta");
+            var pergunta = (perguntaEl.value || "").replace(/^\s+|\s+$/g, '');
+
+            if (!pergunta) {
+                respostaEl.innerText = "Por favor, digite uma pergunta";
+                return;
+            }
+
+            respostaEl.innerText = "Processando...";
+
+            var xhr = new XMLHttpRequest();
+            // Use relative path; GET with query params (no JSON)
+            var url = "/resposta?pergunta=" + encodeURIComponent(pergunta) + "&modelo=" + encodeURIComponent("TheDrummer-Valkyrie-49B-v1");
+            xhr.open('GET', url, true);
+            // Older browsers: avoid setting Content-Type for GET; optionally hint we want text
+            xhr.setRequestHeader('Accept', 'text/plain');
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var resposta = xhr.responseText || "Erro ao obter resposta";
+                        respostaEl.innerText = resposta;
+                    } else {
+                        var msg = xhr.responseText ? (xhr.responseText) : ("Erro de conexão (Status: " + xhr.status + ")");
+                        respostaEl.innerText = msg;
+                    }
+                }
+            };
+
+            xhr.onerror = function() {
+                respostaEl.innerText = "Erro de conexão";
+            };
+
+            xhr.send(null);
+        }
+    </script>
+</body>
+</html>

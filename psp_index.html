@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Pergunta e Resposta PSP</title>
+</head>
+<body>
+    <h2>Pergunta e Resposta</h2>
+    <form action="/resposta" method="get">
+        <input type="text" name="pergunta" placeholder="Pergunta" />
+        <input type="submit" value="Resposta" />
+    </form>
+    <div id="resposta"></div>
+
+    <script language="JavaScript1.5">
+    function atualizarResposta() {
+        var pergunta = document.getElementsByName('pergunta')[0].value;
+        if (!pergunta) {
+            document.getElementById('resposta').innerText = 'Digite uma pergunta';
+            return;
+        }
+        document.getElementById('resposta').innerText = 'Carregando...';
+        
+        // Como o PSP tem suporte limitado a JavaScript, vamos usar o formulário para enviar a pergunta
+        document.getElementsByName('pergunta')[0].form.submit();
+    }
+    
+    // Adiciona evento ao botão de submissão
+    document.getElementsByName('pergunta')[0].form.onsubmit = function() {
+        // Limpa o campo de resposta antes de enviar
+        document.getElementById('resposta').innerText = '';
+    }
+    </script>
+</body>
+</html>
