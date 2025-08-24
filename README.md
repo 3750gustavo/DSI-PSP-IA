@@ -1,5 +1,7 @@
 # 🎮 AI for Your Dusty Consoles: PSP/DSI Edition
 
+<img src="https://github.com/user-attachments/assets/cd2b139a-520d-4a37-8b79-aa50fe45dbe2" width="412" alt="PSP and DSI side by side">
+
 **Step 1:** Stop crying about your retro tech. This app lets your PSP and DSI *finally* join the AI revolution.
 
 ---
