@@ -15,7 +15,7 @@ BASE_URL = config["BASE_URL"].rstrip('/')
 def index():
     user_agent = request.headers.get('User-Agent', '').lower()
     print(f"=== Novo acesso: {user_agent} ===")
-    
+
     # Identificar PSP (exemplo de User Agent: "Mozilla/4.0 (PSP (PlayStation Portable); 2.00)")
     if "playstation portable" in user_agent:
         response = send_file('psp_index.html')
@@ -74,6 +74,26 @@ def gerar_resposta():
     except Exception as e:
         # Don't leak stack traces to old clients; return plain text
         return Response(f"Erro: {str(e)}", status=500, mimetype="text/plain; charset=utf-8")
+
+@app.route('/modelos')
+def listar_modelos():
+    try:
+        headers = {"Authorization": f"Bearer {API_KEY}"}
+        r = requests.get(f"{BASE_URL}/v1/models", headers=headers, timeout=30)
+        r.raise_for_status()
+        data = r.json()
+
+        if isinstance(data, list):
+            modelos = [model.get('id', '') for model in data if isinstance(model, dict)]
+        elif isinstance(data, dict) and 'data' in data:
+            modelos = [model.get('id', '') for model in data['data'] if isinstance(model, dict)]
+        else:
+            modelos = []
+
+        return Response(json.dumps(modelos), mimetype="application/json")
+
+    except Exception as e:
+        return Response(f"Erro ao carregar modelos: {str(e)}", status=500, mimetype="text/plain")
 
 if __name__ == '__main__':
     # Bind to LAN for the DSI; disable debug for stability
