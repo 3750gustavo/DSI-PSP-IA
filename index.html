@@ -50,19 +50,56 @@
         }
     </style>
 </head>
-<body>
+<!-- chamamos init() no onload do body -->
+<body onLoad="init()">
     <div class="container">
-        <h2>Pergunta e Resposta</h2>
+        <h2>AI Perguntas e Respostas (DSI Edition)</h2>
+        <select id="modelo" class="campo">
+            <option value="TheDrummer-Valkyrie-49B-v1">Modelo de IA Padrão (Valkyrie-49B)</option>
+        </select>
         <input type="text" id="pergunta" class="campo" placeholder="Digite sua pergunta aqui" maxlength="200" />
         <div id="resposta" class="campo"></div>
         <button class="botao" onclick="gerarResposta()">Gerar Resposta</button>
     </div>
 
     <script type="text/javascript">
+        function init() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/modelos", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var modelos;
+                        try {
+                            // Tenta JSON.parse
+                            modelos = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            // Fallback para browsers antigos
+                            try {
+                                modelos = eval("(" + xhr.responseText + ")");
+                            } catch (ee) {
+                                modelos = [];
+                            }
+                        }
+
+                        var select = document.getElementById("modelo");
+                        for (var i = 0; i < modelos.length; i++) {
+                            var option = document.createElement("option");
+                            option.value = modelos[i];
+                            option.text = modelos[i];
+                            select.appendChild(option);
+                        }
+                    }
+                }
+            };
+            xhr.send(null);
+        }
+
         function gerarResposta() {
             var perguntaEl = document.getElementById("pergunta");
             var respostaEl = document.getElementById("resposta");
             var pergunta = (perguntaEl.value || "").replace(/^\s+|\s+$/g, '');
+            var modelo = document.getElementById('modelo').value; // troquei const -> var
 
             if (!pergunta) {
                 respostaEl.innerText = "Por favor, digite uma pergunta";
@@ -72,10 +109,8 @@
             respostaEl.innerText = "Processando...";
 
             var xhr = new XMLHttpRequest();
-            // Use relative path; GET with query params (no JSON)
-            var url = "/resposta?pergunta=" + encodeURIComponent(pergunta) + "&modelo=" + encodeURIComponent("TheDrummer-Valkyrie-49B-v1");
+            var url = "/resposta?pergunta=" + encodeURIComponent(pergunta) + "&modelo=" + encodeURIComponent(modelo);
             xhr.open('GET', url, true);
-            // Older browsers: avoid setting Content-Type for GET; optionally hint we want text
             xhr.setRequestHeader('Accept', 'text/plain');
 
             xhr.onreadystatechange = function() {
