@@ -2,6 +2,7 @@ from flask import Flask, request, Response, send_file
 import requests
 import json
 import os
+import re
 
 app = Flask(__name__)
 
@@ -10,6 +11,7 @@ with open("config.json", "r", encoding="utf-8") as f:
     config = json.load(f)
 API_KEY = config["API_KEY"]
 BASE_URL = config["BASE_URL"].rstrip('/')
+SKIP_MODELS = config.get("SKIP_MODELS", [])
 
 @app.route('/')
 def index():
@@ -90,7 +92,18 @@ def listar_modelos():
         else:
             modelos = []
 
-        return Response(json.dumps(modelos), mimetype="application/json")
+        # Filter out models based on SKIP_MODELS patterns
+        filtered_modelos = []
+        for modelo in modelos:
+            should_skip = False
+            for pattern in SKIP_MODELS:
+                if re.search(pattern, modelo, re.IGNORECASE):
+                    should_skip = True
+                    break
+            if not should_skip:
+                filtered_modelos.append(modelo)
+
+        return Response(json.dumps(filtered_modelos), mimetype="application/json")
 
     except Exception as e:
         return Response(f"Erro ao carregar modelos: {str(e)}", status=500, mimetype="text/plain")
