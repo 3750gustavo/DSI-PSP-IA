@@ -18,7 +18,7 @@ def index():
 
     # Identificar PSP (exemplo de User Agent: "Mozilla/4.0 (PSP (PlayStation Portable); 2.00)")
     if "playstation portable" in user_agent:
-        response = send_file('psp_index.html')
+        response = send_file('static/psp_index.html')
         # PSP's browser doesn't handle application/xhtml+xml well — use text/html
         response.headers['Content-Type'] = 'text/html; charset=UTF-8'
         # Some old browsers (like the PSP) treat Content-Disposition with a filename
@@ -27,7 +27,7 @@ def index():
             del response.headers['Content-Disposition']
         return response
     else:
-        response = send_file('index.html')
+        response = send_file('static/dsi_index.html')
         response.headers['Content-Type'] = 'text/html; charset=UTF-8'
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         return response
