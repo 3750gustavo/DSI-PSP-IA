@@ -11,6 +11,11 @@ with open("config.json", "r", encoding="utf-8") as f:
     config = json.load(f)
 API_KEY = config["API_KEY"]
 BASE_URL = config["BASE_URL"].rstrip('/')
+# Defensivo: aceita base com ou sem "/v1" no final (convencao OpenAI x providers diretos).
+# Normaliza pra SEM "/v1" e monta os paths explicitamente, pra /chat/completions e
+# /models nunca duplicarem o prefixo (ex: /v1/v1/models -> 404).
+if BASE_URL.lower().endswith('/v1'):
+    BASE_URL = BASE_URL[:-3]
 SKIP_MODELS = config.get("SKIP_MODELS", [])
 
 @app.route('/')
@@ -65,7 +70,7 @@ def gerar_resposta():
     }
 
     try:
-        r = requests.post(f"{BASE_URL}/chat/completions", json=payload, headers=headers, timeout=60)
+        r = requests.post(f"{BASE_URL}/v1/chat/completions", json=payload, headers=headers, timeout=60)
         r.raise_for_status()
         data = r.json()
         if "choices" in data and data["choices"]:
