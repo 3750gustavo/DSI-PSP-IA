@@ -48,7 +48,7 @@
 ---
 
 ### **Contributing**
-If you’re some retro gaming nerd who wants to optimize this to work on even more retro consoles (Wii, Wii U, etc.), fork away. Just send the pull request once you tested on real hardware, make sure all changes are based on user agent detection and each consome must have their own HTML file.
+If you’re some retro gaming nerd who wants to optimize this to work on even more retro consoles (Wii, Wii U, etc.), fork away. Just send the pull request once you tested on real hardware, make sure all changes are based on user agent detection and each console must have their own HTML file.
 
 ---
 
